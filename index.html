@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle — Astrologie & Numérologie</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #07060a;
+  --bg1:      #0e0c14;
+  --bg2:      #15121e;
+  --bg3:      #1c1828;
+  --gold:     #c8a55a;
+  --gold-lt:  #e2c97e;
+  --gold-dk:  #7a5f28;
+  --gold-glow:rgba(200,165,90,0.18);
+  --silver:   #9baabb;
+  --red:      #a83232;
+  --red-lt:   #d45050;
+  --cream:    #e8dfc8;
+  --cream-dk: #8a7e68;
+  --cream-dim:#4a4438;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Stars background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 15% 20%, rgba(200,165,90,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 8%,  rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 35%, rgba(200,165,90,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 12%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 45%, rgba(200,165,90,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 5%  60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 75%, rgba(200,165,90,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 65% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 70%, rgba(200,165,90,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 92%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 10% 42%, rgba(200,165,90,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 80% 28%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 50% 55%, rgba(200,165,90,0.6) 0%, transparent 100%);
+  pointer-events: none; z-index: 0;
+}
+
+/* Nebula glow */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 30%, rgba(80,40,120,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 70%, rgba(40,60,120,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(200,165,90,0.04) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 52px 20px 100px;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  margin-bottom: 56px;
+  animation: fadeDown 1.2s ease both;
+}
+
+.header-glyph {
+  font-size: 2.6rem;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 12px;
+  text-shadow: 0 0 30px var(--gold-glow);
+  animation: rotateSlow 40s linear infinite;
+  display: inline-block;
+}
+
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.5rem, 5vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: var(--gold-lt);
+  text-shadow: 0 0 50px rgba(200,165,90,0.3);
+  margin-bottom: 8px;
+}
+
+.tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--cream-dk);
+  letter-spacing: 0.12em;
+}
+
+.hr-ornament {
+  display: flex; align-items: center; gap: 10px;
+  justify-content: center; margin: 18px 0;
+}
+.hr-ornament .l {
+  flex: 1; max-width: 140px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dk));
+}
+.hr-ornament .l.r { background: linear-gradient(to left, transparent, var(--gold-dk)); }
+.hr-ornament span { color: var(--gold); font-size: 0.55rem; letter-spacing: 0.5em; }
+
+/* ── INPUT PANEL ── */
+.input-panel {
+  background: linear-gradient(135deg, var(--bg2) 0%, var(--bg1) 100%);
+  border: 1px solid rgba(200,165,90,0.2);
+  border-radius: 6px;
+  padding: 36px 32px;
+  margin-bottom: 48px;
+  position: relative;
+  animation: fadeUp 1s ease 0.2s both;
+}
+.input-panel::before {
+  content: '';
+  position: absolute; top: 0; left: 30px; right: 30px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dk), transparent);
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+  align-items: end;
+}
+
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field.full { grid-column: 1 / -1; }
+
+label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-dk);
+}
+
+input[type="date"], input[type="time"], input[type="number"] {
+  background: var(--bg3);
+  border: 1px solid rgba(200,165,90,0.25);
+  border-radius: 3px;
+  color: var(--gold-lt);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+}
+input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(200,165,90,0.1);
+}
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button { display: none; }
+
+.time-note {
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--cream-dim);
+  text-align: center;
+  grid-column: 1 / -1;
+  margin-top: -8px;
+}
+
+.calc-btn {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--gold-dk), #5a3e10);
+  border: 1px solid var(--gold-dk);
+  border-radius: 3px;
+  color: var(--gold-lt);
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  padding: 16px 32px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 8px;
+}
+.calc-btn:hover {
+  background: linear-gradient(135deg, #8a6020, #7a4e18);
+  box-shadow: 0 0 30px rgba(200,165,90,0.2);
+  color: var(--gold-lt);
+}
+
+/* ── RESULTS ── */
+#results { display: none; }
+#results.show { display: block; animation: fadeUp 0.8s ease both; }
+
+/* Section titles */
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold-dk);
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+.section-title::before, .section-title::after {
+  content: '✦';
+  margin: 0 14px;
+  color: var(--gold-dk);
+  font-size: 0.5rem;
+}
+
+/* ── ASTROLOGY ROW ── */
+.astro-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.astro-card {
+  background: linear-gradient(145deg, var(--bg2), var(--bg1));
+  border: 1px solid rgba(200,165,90,0.18);
+  border-radius: 6px;
+  padding: 28px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.astro-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--gold-glow), transparent 70%);
+  pointer-events: none;
+}
+
+.astro-card-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  margin-bottom: 12px;
+}
+
+.astro-symbol {
+  font-size: clamp(2.8rem, 8vw, 4rem);
+  line-height: 1;
+  margin-bottom: 8px;
+  display: block;
+  filter: drop-shadow(0 0 12px var(--gold-glow));
+}
+
+.astro-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  color: var(--gold-lt);
+  margin-bottom: 4px;
+  letter-spacing: 0.1em;
+}
+
+.astro-sub {
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--cream-dk);
+}
+
+/* Chinese extra info */
+.chinese-element-badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--red-lt);
+  border: 1px solid rgba(164,50,50,0.3);
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+
+/* ── NUMEROLOGY ── */
+.num-section {
+  background: linear-gradient(135deg, var(--bg2) 0%, var(--bg1) 100%);
+  border: 1px solid rgba(200,165,90,0.15);
+  border-radius: 6px;
+  padding: 32px 28px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.num-section::before {
+  content: '';
+  position: absolute; top: 0; left: 24px; right: 24px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dk), transparent);
+}
+
+/* Life path — big */
+.lifepath-display {
+  text-align: center;
+  padding: 8px 0 24px;
+}
+
+.lp-number {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(4rem, 15vw, 7rem);
+  color: var(--gold-lt);
+  line-height: 1;
+  text-shadow: 0 0 60px rgba(200,165,90,0.4);
+  display: block;
+  animation: pulseNum 3s ease-in-out infinite;
+}
+
+.lp-master-badge {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  border: 1px solid var(--gold-dk);
+  padding: 3px 12px;
+  border-radius: 2px;
+  margin: 4px 0 8px;
+}
+
+.lp-calc {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--cream-dim);
+  margin-bottom: 6px;
+}
+
+.lp-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+.lp-desc {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--cream-dk);
+  font-style: italic;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* Reduction chain */
+.chain {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap; margin: 8px 0;
+}
+.chain-n {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--cream-dk);
+}
+.chain-n.final { color: var(--gold); font-size: 1.3rem; }
+.chain-arr { color: var(--gold-dk); font-size: 0.75rem; }
+
+/* Personal cycles — grid */
+.cycles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.cycle-card {
+  background: var(--bg3);
+  border: 1px solid rgba(200,165,90,0.15);
+  border-radius: 4px;
+  padding: 20px 16px;
+  text-align: center;
+  position: relative;
+}
+
+.cycle-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  margin-bottom: 8px;
+}
+
+.cycle-number {
+  font-family: 'Cinzel', serif;
+  font-size: 2.4rem;
+  color: var(--gold);
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(200,165,90,0.3);
+}
+
+.cycle-chain {
+  font-size: 0.72rem;
+  color: var(--cream-dim);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.cycle-desc {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--cream-dk);
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+/* Hour personal — optional */
+.hour-note {
+  text-align: center;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--cream-dim);
+  padding: 16px;
+  border: 1px dashed rgba(200,165,90,0.15);
+  border-radius: 3px;
+  margin-top: 14px;
+}
+
+/* Footer */
+.footer-sym {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 1.6rem;
+  color: var(--gold-dk);
+  letter-spacing: 0.5em;
+  opacity: 0.5;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeDown { from{opacity:0;transform:translateY(-24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp   { from{opacity:0;transform:translateY(24px)}  to{opacity:1;transform:translateY(0)} }
+@keyframes rotateSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes pulseNum {
+  0%,100%{text-shadow:0 0 40px rgba(200,165,90,0.4)}
+  50%    {text-shadow:0 0 80px rgba(200,165,90,0.7),0 0 120px rgba(200,165,90,0.2)}
+}
+
+@media(max-width:520px){
+  .astro-row { grid-template-columns: 1fr; }
+  .input-grid { grid-template-columns: 1fr; }
+  .cycles-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<header>
+  <span class="header-glyph">✦</span>
+  <h1>ORACLE</h1>
+  <p class="tagline">Astrologie Occidentale · Zodiaque Chinois · Numérologie Pythagoricienne</p>
+  <div class="hr-ornament">
+    <div class="l"></div>
+    <span>◆ ◇ ◆</span>
+    <div class="l r"></div>
+  </div>
+</header>
+
+<!-- INPUT -->
+<div class="input-panel">
+  <div class="input-grid">
+    <div class="field full">
+      <label for="bDate">Date de naissance</label>
+      <input type="date" id="bDate">
+    </div>
+    <div class="field">
+      <label for="bHour">Heure de naissance (optionnelle)</label>
+      <input type="time" id="bHour">
+    </div>
+    <div class="field">
+      <label for="curDate">Date actuelle</label>
+      <input type="date" id="curDate">
+    </div>
+    <p class="time-note">L'heure permet de calculer votre heure personnelle</p>
+    <button class="calc-btn" onclick="compute()">Révéler mon Oracle</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+
+  <!-- I. ASTROLOGIE -->
+  <div class="section-title">I · Signes Astrologiques</div>
+  <div class="astro-row">
+
+    <div class="astro-card">
+      <div class="astro-card-label">Astrologie Occidentale</div>
+      <span class="astro-symbol" id="wesSymbol"></span>
+      <div class="astro-name" id="wesName"></div>
+      <div class="astro-sub" id="wesSub"></div>
+    </div>
+
+    <div class="astro-card">
+      <div class="astro-card-label">Zodiaque Chinois</div>
+      <span class="astro-symbol" id="chiSymbol"></span>
+      <div class="astro-name" id="chiName"></div>
+      <div class="astro-sub" id="chiSub"></div>
+      <div class="chinese-element-badge" id="chiElement"></div>
+    </div>
+
+  </div>
+
+  <!-- II. CHEMIN DE VIE -->
+  <div class="section-title" style="margin-top:40px">II · Chemin de Vie</div>
+  <div class="num-section">
+    <div class="lifepath-display">
+      <span class="lp-number" id="lpNum"></span>
+      <div id="lpMasterBadge" class="lp-master-badge" style="display:none">Nombre Maître</div>
+      <div class="lp-calc" id="lpCalc"></div>
+      <div class="chain" id="lpChain"></div>
+      <div class="lp-title" id="lpTitle"></div>
+      <p class="lp-desc" id="lpDesc"></p>
+    </div>
+  </div>
+
+  <!-- III. CYCLES PERSONNELS -->
+  <div class="section-title" style="margin-top:40px">III · Cycles Personnels</div>
+  <div class="num-section">
+    <div class="cycles-grid">
+      <div class="cycle-card">
+        <div class="cycle-label">Année Personnelle</div>
+        <div class="cycle-number" id="cycleYear"></div>
+        <div class="cycle-chain" id="cycleYearChain"></div>
+        <div class="cycle-desc" id="cycleYearDesc"></div>
+      </div>
+      <div class="cycle-card">
+        <div class="cycle-label">Mois Personnel</div>
+        <div class="cycle-number" id="cycleMonth"></div>
+        <div class="cycle-chain" id="cycleMonthChain"></div>
+        <div class="cycle-desc" id="cycleMonthDesc"></div>
+      </div>
+      <div class="cycle-card">
+        <div class="cycle-label">Jour Personnel</div>
+        <div class="cycle-number" id="cycleDay"></div>
+        <div class="cycle-chain" id="cycleDayChain"></div>
+        <div class="cycle-desc" id="cycleDayDesc"></div>
+      </div>
+      <div class="cycle-card" id="cycleHourCard">
+        <div class="cycle-label">Heure Personnelle</div>
+        <div class="cycle-number" id="cycleHour">—</div>
+        <div class="cycle-chain" id="cycleHourChain"></div>
+        <div class="cycle-desc" id="cycleHourDesc"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-sym">✦ ◆ ✦</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+
+// Western zodiac
+const WESTERN = [
+  { name:'Capricorne', symbol:'♑', dates:'22 déc – 19 jan', element:'Terre', quality:'Cardinal', ruler:'Saturne' },
+  { name:'Verseau',    symbol:'♒', dates:'20 jan – 18 fév', element:'Air',   quality:'Fixe',     ruler:'Uranus' },
+  { name:'Poissons',   symbol:'♓', dates:'19 fév – 20 mar', element:'Eau',   quality:'Mutable',  ruler:'Neptune' },
+  { name:'Bélier',     symbol:'♈', dates:'21 mar – 19 avr', element:'Feu',   quality:'Cardinal', ruler:'Mars' },
+  { name:'Taureau',    symbol:'♉', dates:'20 avr – 20 mai', element:'Terre', quality:'Fixe',     ruler:'Vénus' },
+  { name:'Gémeaux',    symbol:'♊', dates:'21 mai – 20 jun', element:'Air',   quality:'Mutable',  ruler:'Mercure' },
+  { name:'Cancer',     symbol:'♋', dates:'21 jun – 22 jul', element:'Eau',   quality:'Cardinal', ruler:'Lune' },
+  { name:'Lion',       symbol:'♌', dates:'23 jul – 22 aoû', element:'Feu',   quality:'Fixe',     ruler:'Soleil' },
+  { name:'Vierge',     symbol:'♍', dates:'23 aoû – 22 sep', element:'Terre', quality:'Mutable',  ruler:'Mercure' },
+  { name:'Balance',    symbol:'♎', dates:'23 sep – 22 oct', element:'Air',   quality:'Cardinal', ruler:'Vénus' },
+  { name:'Scorpion',   symbol:'♏', dates:'23 oct – 21 nov', element:'Eau',   quality:'Fixe',     ruler:'Pluton' },
+  { name:'Sagittaire', symbol:'♐', dates:'22 nov – 21 déc', element:'Feu',   quality:'Mutable',  ruler:'Jupiter' }
+];
+
+// Chinese New Year dates → animal index (0=Rat … 11=Pig)
+const CNY = [
+  [1900,1,31],[1901,2,19],[1902,2,8],[1903,1,29],[1904,2,16],[1905,2,4],[1906,1,25],[1907,2,13],[1908,2,2],[1909,1,22],
+  [1910,2,10],[1911,1,30],[1912,2,18],[1913,2,6],[1914,1,26],[1915,2,14],[1916,2,3],[1917,1,23],[1918,2,11],[1919,2,1],
+  [1920,2,20],[1921,2,8],[1922,1,28],[1923,2,16],[1924,2,5],[1925,1,25],[1926,2,13],[1927,2,2],[1928,1,23],[1929,2,10],
+  [1930,1,30],[1931,2,17],[1932,2,6],[1933,1,26],[1934,2,14],[1935,2,4],[1936,1,24],[1937,2,11],[1938,1,31],[1939,2,19],
+  [1940,2,8],[1941,1,27],[1942,2,15],[1943,2,5],[1944,1,25],[1945,2,13],[1946,2,2],[1947,1,22],[1948,2,10],[1949,1,29],
+  [1950,2,17],[1951,2,6],[1952,1,27],[1953,2,14],[1954,2,3],[1955,1,24],[1956,2,12],[1957,1,31],[1958,2,18],[1959,2,8],
+  [1960,1,28],[1961,2,15],[1962,2,5],[1963,1,25],[1964,2,13],[1965,2,2],[1966,1,21],[1967,2,9],[1968,1,30],[1969,2,17],
+  [1970,2,6],[1971,1,27],[1972,2,15],[1973,2,3],[1974,1,23],[1975,2,11],[1976,1,31],[1977,2,18],[1978,2,7],[1979,1,28],
+  [1980,2,16],[1981,2,5],[1982,1,25],[1983,2,13],[1984,2,2],[1985,2,20],[1986,2,9],[1987,1,29],[1988,2,17],[1989,2,6],
+  [1990,1,27],[1991,2,15],[1992,2,4],[1993,1,23],[1994,2,10],[1995,1,31],[1996,2,19],[1997,2,7],[1998,1,28],[1999,2,16],
+  [2000,2,5],[2001,1,24],[2002,2,12],[2003,2,1],[2004,1,22],[2005,2,9],[2006,1,29],[2007,2,18],[2008,2,7],[2009,1,26],
+  [2010,2,14],[2011,2,3],[2012,1,23],[2013,2,10],[2014,1,31],[2015,2,19],[2016,2,8],[2017,1,28],[2018,2,16],[2019,2,5],
+  [2020,1,25],[2021,2,12],[2022,2,1],[2023,1,22],[2024,2,10],[2025,1,29],[2026,2,17],[2027,2,6],[2028,1,26],[2029,2,13],
+  [2030,2,3],[2031,1,23],[2032,2,11],[2033,1,31],[2034,2,19]
+];
+
+const CHI_ANIMALS = [
+  { name:'Rat',      chinese:'鼠', emoji:'🐀', element:'Eau',    polarity:'Yang' },
+  { name:'Bœuf',     chinese:'牛', emoji:'🐂', element:'Terre',  polarity:'Yin'  },
+  { name:'Tigre',    chinese:'虎', emoji:'🐯', element:'Bois',   polarity:'Yang' },
+  { name:'Lapin',    chinese:'兔', emoji:'🐇', element:'Bois',   polarity:'Yin'  },
+  { name:'Dragon',   chinese:'龍', emoji:'🐉', element:'Terre',  polarity:'Yang' },
+  { name:'Serpent',  chinese:'蛇', emoji:'🐍', element:'Feu',    polarity:'Yin'  },
+  { name:'Cheval',   chinese:'馬', emoji:'🐎', element:'Feu',    polarity:'Yang' },
+  { name:'Chèvre',   chinese:'羊', emoji:'🐐', element:'Terre',  polarity:'Yin'  },
+  { name:'Singe',    chinese:'猴', emoji:'🐒', element:'Métal',  polarity:'Yang' },
+  { name:'Coq',      chinese:'雞', emoji:'🐓', element:'Métal',  polarity:'Yin'  },
+  { name:'Chien',    chinese:'狗', emoji:'🐕', element:'Terre',  polarity:'Yang' },
+  { name:'Cochon',   chinese:'豬', emoji:'🐷', element:'Eau',    polarity:'Yin'  }
+];
+
+// Chinese year element (based on last digit of zodiac year)
+const CHI_YEAR_ELEMENTS = {
+  0:'Métal', 1:'Métal', 2:'Eau', 3:'Eau', 4:'Bois',
+  5:'Bois',  6:'Feu',   7:'Feu', 8:'Terre',9:'Terre'
+};
+
+// Numerology interpretations (1-9 + 11,22,33)
+const NUM_LIFE = {
+  1:  { title:'Le Pionnier',          desc:'Né pour diriger et innover, le 1 incarne la volonté première. Votre chemin est celui de l\'individualité absolue, de l\'initiative et de la création ex nihilo. Vous êtes destiné à ouvrir des voies là où personne n\'a osé s\'aventurer.' },
+  2:  { title:'Le Médiateur',         desc:'Le 2 est le nombre de la dualité réconciliée. Votre chemin est celui de la diplomatie, de l\'empathie et de la coopération. Vous percevez les nuances que d\'autres ignorent et savez tisser les fils de l\'harmonie.' },
+  3:  { title:'L\'Exprimant',         desc:'Le 3 est la synthèse créatrice. Votre chemin est celui de l\'expression joyeuse, de la communication et de la création artistique. Votre enthousiasme solaire illumine tout ce que vous touchez.' },
+  4:  { title:'Le Bâtisseur',         desc:'Le 4 est la pierre angulaire. Votre chemin est celui de l\'ordre, de la discipline et de la construction durable. Vous érigez des structures qui traversent le temps, par la rigueur et la persévérance.' },
+  5:  { title:'L\'Aventurier',        desc:'Le 5 est le vent de liberté. Votre chemin est celui du mouvement perpétuel, de l\'expérience sensorielle et de l\'adaptabilité. Vous vivez plusieurs vies en une seule, insatiable d\'horizons nouveaux.' },
+  6:  { title:'Le Gardien',           desc:'Le 6 est l\'amour incarné. Votre chemin est celui de la responsabilité, de la beauté et du service. Vous êtes le pilier sur lequel les autres s\'appuient, le gardien de l\'harmonie familiale et communautaire.' },
+  7:  { title:'Le Mystique',          desc:'Le 7 est le nombre sacré de la sagesse. Votre chemin est celui de l\'introspection, de l\'analyse et de la quête spirituelle. Vous cherchez la vérité derrière les apparences avec une rigueur de chercheur.' },
+  8:  { title:'L\'Architecte de Pouvoir', desc:'Le 8 est la roue karmique du monde. Votre chemin est celui de la puissance matérielle et spirituelle, de l\'ambition et de l\'autorité. L\'abondance vous appelle à condition de maîtriser la balance.' },
+  9:  { title:'Le Sage Universel',    desc:'Le 9 est la complétude. Votre chemin est celui de la sagesse accomplie, de la compassion universelle et de l\'idéalisme humaniste. Vous portez en vous les leçons de tous les nombres précédents.' },
+  11: { title:'L\'Illuminé',          desc:'Le 11 est un Nombre Maître d\'intuition et d\'illumination. Votre chemin est celui du canal entre les mondes visibles et invisibles. Votre mission est d\'apporter la lumière et l\'inspiration à l\'humanité.' },
+  22: { title:'Le Grand Architecte',  desc:'Le 22 est le Nombre Maître du bâtisseur de civilisation. Votre chemin est celui de la manifestation des grandes visions dans la réalité. Vous avez le pouvoir rare de transformer les rêves en monuments durables.' },
+  33: { title:'Le Maître Enseignant', desc:'Le 33 est le Nombre Maître de l\'amour universel. Votre chemin est celui de l\'enseignement et de la guérison par l\'amour inconditionnel. Votre présence élève la conscience de ceux qui vous approchent.' }
+};
+
+const NUM_CYCLES = {
+  1:  { year:'Année de semailles — initiez, osez, commencez.', month:'Mois d\'impulsion — prenez les devants.', day:'Journée d\'initiative — agissez en premier.', hour:'Heure du leader — votre parole a du poids.' },
+  2:  { year:'Année de patience — cultivez vos relations.', month:'Mois de coopération — écoutez plus qu\'agissez.', day:'Journée de douceur — favorisez le dialogue.', hour:'Heure de la sensibilité — votre intuition est aiguisée.' },
+  3:  { year:'Année d\'expression — créez, communiquez, rayonnez.', month:'Mois créatif — laissez parler votre art.', day:'Journée joyeuse — l\'expression coule librement.', hour:'Heure du charme — vos mots touchent juste.' },
+  4:  { year:'Année de fondations — construisez sur du solide.', month:'Mois de travail — disciplinez vos efforts.', day:'Journée de rigueur — posez des bases solides.', hour:'Heure de la méthode — organisez, structurez.' },
+  5:  { year:'Année de changement — lâchez l\'ancien, accueillez le nouveau.', month:'Mois de liberté — explorez sans contraintes.', day:'Journée de mouvement — restez adaptable.', hour:'Heure du hasard — soyez ouvert aux surprises.' },
+  6:  { year:'Année de responsabilité — famille et beauté au premier plan.', month:'Mois d\'harmonie — prenez soin des êtres chers.', day:'Journée de service — donnez généreusement.', hour:'Heure de l\'amour — vos gestes réchauffent.' },
+  7:  { year:'Année de réflexion — introspection et développement intérieur.', month:'Mois de sagesse — méditez avant d\'agir.', day:'Journée d\'analyse — cherchez la profondeur.', hour:'Heure du mystère — votre perspicacité est maximale.' },
+  8:  { year:'Année de puissance — ambition, argent et reconnaissance.', month:'Mois d\'autorité — affirmez votre valeur.', day:'Journée de conquête — saisissez les opportunités.', hour:'Heure du pouvoir — votre leadership s\'impose.' },
+  9:  { year:'Année de clôture — terminez, lâchez, transmutez.', month:'Mois d\'achèvement — finissez ce qui traîne.', day:'Journée de bilan — clôturez avec sagesse.', hour:'Heure de la compassion — élevez votre regard.' },
+  11: { year:'Année maîtresse — intuition et illumination extraordinaires.', month:'Mois de vision — faites confiance à vos perceptions.', day:'Journée d\'éveil — vos insights sont précieux.', hour:'Heure du canal — vos pensées s\'illuminent.' },
+  22: { year:'Année maîtresse — réalisations exceptionnelles à votre portée.', month:'Mois de manifestation — bâtissez grand.', day:'Journée de puissance — tout ce que vous créez dure.', hour:'Heure de la maîtrise — votre impact est profond.' },
+  33: { year:'Année maîtresse — amour et enseignement universels.', month:'Mois d\'élévation — guidez par l\'exemple.', day:'Journée de lumière — votre compassion transforme.', hour:'Heure sacrée — vous êtes un canal d\'amour.' }
+};
+
+// ═══════════════════════════════════════════════════════════
+// WESTERN ZODIAC
+// ═══════════════════════════════════════════════════════════
+function getWestern(m, d) {
+  const dates = [
+    [1,20],[2,19],[3,21],[4,20],[5,21],[6,21],[7,23],[8,23],[9,23],[10,23],[11,22],[12,22]
+  ];
+  for (let i = 0; i < 12; i++) {
+    const [nm, nd] = dates[i];
+    if (m === nm && d < nd) return WESTERN[(i + 11) % 12];
+    if (m === nm && d >= nd) return WESTERN[i];
+    if (m === (nm % 12) + 1 && i < 11) continue;
+  }
+  return WESTERN[m - 1];
+}
+
+function getWesternSign(month, day) {
+  if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return WESTERN[0];
+  if (month === 1 || (month === 2 && day <= 18)) return WESTERN[1];
+  if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return WESTERN[2];
+  if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return WESTERN[3];
+  if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return WESTERN[4];
+  if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return WESTERN[5];
+  if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return WESTERN[6];
+  if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return WESTERN[7];
+  if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return WESTERN[8];
+  if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return WESTERN[9];
+  if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return WESTERN[10];
+  return WESTERN[11];
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHINESE ZODIAC
+// ═══════════════════════════════════════════════════════════
+function getChineseSign(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const birth = new Date(y, m-1, d);
+  let idx = 0, zodiacYear = y;
+  for (let i = CNY.length-1; i >= 0; i--) {
+    const [cy,cm,cd] = CNY[i];
+    if (birth >= new Date(cy, cm-1, cd)) {
+      zodiacYear = cy;
+      idx = ((cy - 1900) % 12 + 12) % 12;
+      break;
+    }
+  }
+  const animal = CHI_ANIMALS[idx];
+  const yearElem = CHI_YEAR_ELEMENTS[zodiacYear % 10];
+  return { animal, zodiacYear, yearElem };
+}
+
+// ═══════════════════════════════════════════════════════════
+// NUMEROLOGY
+// ═══════════════════════════════════════════════════════════
+function isMaster(n) { return n===11||n===22||n===33; }
+
+function reduce(n) {
+  const chain = [n];
+  while (n > 9 && !isMaster(n)) {
+    n = String(n).split('').reduce((s,c)=>s+parseInt(c),0);
+    chain.push(n);
+    if (isMaster(n)) break;
+  }
+  return { val: n, chain };
+}
+
+function digSum(n) {
+  return String(n).split('').reduce((s,c)=>s+parseInt(c),0);
+}
+
+function lifePathCalc(y, m, d) {
+  // Pythagorean: sum day + month + year (digit by digit)
+  const raw = digSum(d) + digSum(m) + digSum(y);
+  const detail = `${digSum(d)} + ${digSum(m)} + ${digSum(y)} = ${raw}`;
+  const r = reduce(raw);
+  return { ...r, detail };
+}
+
+function personalYear(birthMonth, birthDay, currentYear) {
+  const raw = digSum(birthDay) + digSum(birthMonth) + digSum(currentYear);
+  return reduce(raw);
+}
+
+function personalMonth(pyVal, currentMonth) {
+  const raw = pyVal + digSum(currentMonth);
+  return reduce(raw);
+}
+
+function personalDay(pmVal, currentDay) {
+  const raw = pmVal + digSum(currentDay);
+  return reduce(raw);
+}
+
+function personalHour(pdVal, hour) {
+  const raw = pdVal + digSum(hour);
+  return reduce(raw);
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER HELPERS
+// ═══════════════════════════════════════════════════════════
+function renderChain(id, chainObj) {
+  const el = document.getElementById(id);
+  if (chainObj.chain.length <= 1) { el.textContent = ''; return; }
+  el.innerHTML = chainObj.chain.map((n,i) => {
+    const cls = i === chainObj.chain.length-1 ? 'chain-n final' : 'chain-n';
+    return `<span class="${cls}">${n}</span>${i<chainObj.chain.length-1?'<span class="chain-arr">→</span>':''}`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN COMPUTE
+// ═══════════════════════════════════════════════════════════
+function compute() {
+  const bdStr = document.getElementById('bDate').value;
+  const cdStr = document.getElementById('curDate').value;
+  const hourStr = document.getElementById('bHour').value;
+
+  if (!bdStr || !cdStr) {
+    alert('Veuillez renseigner la date de naissance et la date actuelle.');
+    return;
+  }
+
+  const [by, bm, bd] = bdStr.split('-').map(Number);
+  const [cy, cm, cd] = cdStr.split('-').map(Number);
+
+  // ── WESTERN ──
+  const wesSign = getWesternSign(bm, bd);
+  document.getElementById('wesSymbol').textContent = wesSign.symbol;
+  document.getElementById('wesName').textContent   = wesSign.name;
+  document.getElementById('wesSub').textContent    = `${wesSign.element} · ${wesSign.quality} · ♟ ${wesSign.ruler}`;
+
+  // ── CHINESE ──
+  const { animal, zodiacYear, yearElem } = getChineseSign(bdStr);
+  document.getElementById('chiSymbol').textContent  = animal.emoji;
+  document.getElementById('chiName').textContent    = `${animal.name}  ${animal.chinese}`;
+  document.getElementById('chiSub').textContent     = `${animal.polarity} · Année ${zodiacYear}`;
+  document.getElementById('chiElement').textContent = `${yearElem} ${animal.polarity}`;
+
+  // ── LIFE PATH ──
+  const lp = lifePathCalc(by, bm, bd);
+  document.getElementById('lpNum').textContent  = lp.val;
+  document.getElementById('lpCalc').textContent = lp.detail;
+  const lpMaster = document.getElementById('lpMasterBadge');
+  lpMaster.style.display = isMaster(lp.val) ? 'inline-block' : 'none';
+  renderChain('lpChain', lp);
+  const lpData = NUM_LIFE[lp.val] || NUM_LIFE[9];
+  document.getElementById('lpTitle').textContent = lpData.title;
+  document.getElementById('lpDesc').textContent  = lpData.desc;
+
+  // ── PERSONAL YEAR ──
+  const py = personalYear(bm, bd, cy);
+  document.getElementById('cycleYear').textContent = py.val;
+  document.getElementById('cycleYearChain').textContent = py.chain.length > 1
+    ? py.chain.join(' → ') : '';
+  document.getElementById('cycleYearDesc').textContent =
+    (NUM_CYCLES[py.val] || NUM_CYCLES[9]).year;
+
+  // ── PERSONAL MONTH ──
+  const pm = personalMonth(py.val, cm);
+  document.getElementById('cycleMonth').textContent = pm.val;
+  document.getElementById('cycleMonthChain').textContent = pm.chain.length > 1
+    ? pm.chain.join(' → ') : '';
+  document.getElementById('cycleMonthDesc').textContent =
+    (NUM_CYCLES[pm.val] || NUM_CYCLES[9]).month;
+
+  // ── PERSONAL DAY ──
+  const pd = personalDay(pm.val, cd);
+  document.getElementById('cycleDay').textContent = pd.val;
+  document.getElementById('cycleDayChain').textContent = pd.chain.length > 1
+    ? pd.chain.join(' → ') : '';
+  document.getElementById('cycleDayDesc').textContent =
+    (NUM_CYCLES[pd.val] || NUM_CYCLES[9]).day;
+
+  // ── PERSONAL HOUR (optional) ──
+  if (hourStr) {
+    const h = parseInt(hourStr.split(':')[0]);
+    const ph = personalHour(pd.val, h);
+    document.getElementById('cycleHour').textContent = ph.val;
+    document.getElementById('cycleHourChain').textContent = ph.chain.length > 1
+      ? ph.chain.join(' → ') : '';
+    document.getElementById('cycleHourDesc').textContent =
+      (NUM_CYCLES[ph.val] || NUM_CYCLES[9]).hour;
+  } else {
+    document.getElementById('cycleHour').textContent = '—';
+    document.getElementById('cycleHourChain').textContent = '';
+    document.getElementById('cycleHourDesc').textContent = 'Renseignez votre heure de naissance pour ce calcul.';
+  }
+
+  // Show results
+  const res = document.getElementById('results');
+  res.classList.add('show');
+  setTimeout(() => res.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+// Pre-fill today's date
+document.getElementById('curDate').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
